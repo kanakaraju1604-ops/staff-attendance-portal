@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Staff Attendance Portal (June - Sept 2026)</title>
+    <title>School Staff Attendance Portal (2026-2027)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,7 +37,6 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -65,7 +64,7 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-slate-900 text-base sm:text-lg leading-tight">School Staff Portal</h1>
-                    <p class="text-xs text-slate-500">Attendance Report • Jun – Sep 2026</p>
+                    <p class="text-xs text-slate-500">Attendance Report • 2026–2027</p>
                 </div>
             </div>
 
@@ -124,7 +123,7 @@
                                 >
                             </div>
 
-                            <!-- Live matching dropdown for multiple or partial name matches -->
+                            <!-- Live matching dropdown -->
                             <div id="loginSuggestions" class="hidden mt-2 bg-white border border-slate-200 rounded-xl shadow-lg max-h-52 overflow-y-auto divide-y divide-slate-100"></div>
                         </div>
 
@@ -224,7 +223,7 @@
                     <div>
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Working Days</p>
                         <p id="cardTotalWorking" class="text-4xl font-extrabold text-slate-900 mt-2">80</p>
-                        <p class="text-xs text-slate-500 mt-1">June – September 2026</p>
+                        <p class="text-xs text-slate-500 mt-1">Academic Year 2026–2027</p>
                     </div>
                     <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100">
                         <i class="fa-solid fa-calendar-days"></i>
@@ -269,7 +268,7 @@
                         <span>ADMIN PANEL • CODE 9999999</span>
                     </div>
                     <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">School Staff Attendance Directory</h2>
-                    <p class="text-slate-300 text-sm">Manage staff members, search attendance records across all 55 teachers.</p>
+                    <p class="text-slate-300 text-sm">Manage staff members, search attendance records, and edit attendance figures instantly.</p>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
@@ -297,7 +296,7 @@
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Working Days</span>
                         <p class="text-3xl font-extrabold text-slate-800 mt-1">80</p>
-                        <span class="text-xs text-slate-500">June – September 2026</span>
+                        <span class="text-xs text-slate-500">Academic Year 2026–2027</span>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-calendar-check"></i>
@@ -362,7 +361,7 @@
                                 <th class="py-3.5 px-4 text-center bg-rose-900/40 text-rose-200">Total Leave Days</th>
                                 <th class="py-3.5 px-4 text-center bg-indigo-900/40 text-indigo-200">Total Days</th>
                                 <th class="py-3.5 px-4 text-center">Attendance %</th>
-                                <th class="py-3.5 px-4 text-right">Action</th>
+                                <th class="py-3.5 px-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody" class="divide-y divide-slate-200 text-sm">
@@ -375,10 +374,69 @@
 
     </main>
 
+    <!-- ==================== EDIT ATTENDANCE MODAL ==================== -->
+    <div id="editAttendanceModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5 text-white flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
+                        <i class="fa-solid fa-pen-to-square text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">Edit Staff Attendance</h3>
+                        <p class="text-xs text-indigo-100" id="editModalSub">Update presence & leave figures</p>
+                    </div>
+                </div>
+                <button onclick="closeEditModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="editAttendanceForm" onsubmit="handleSaveAttendance(event)" class="p-6 space-y-5">
+                <input type="hidden" id="editEmpId">
+                
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Teacher Name & ID</label>
+                        <p id="editEmpDisplay" class="text-sm font-extrabold text-slate-900">-</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1.5">Total Days Present *</label>
+                        <input type="number" id="editPresentDays" min="0" max="80" required oninput="previewEditCalc()" class="w-full px-4 py-2.5 bg-emerald-50/50 border border-emerald-300 rounded-xl text-sm font-bold text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-rose-700 mb-1.5">Total Leave Days *</label>
+                        <input type="number" id="editLeaveDays" min="0" max="80" required oninput="previewEditCalc()" class="w-full px-4 py-2.5 bg-rose-50/50 border border-rose-300 rounded-xl text-sm font-bold text-rose-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-indigo-700 uppercase">Recalculated Attendance %</span>
+                        <p class="text-[11px] text-slate-500">Based on 80 total working days</p>
+                    </div>
+                    <span id="editPreviewRate" class="text-xl font-extrabold text-indigo-700">0.0%</span>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-lg shadow-indigo-600/20 transition">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-            <p>School Staff Attendance Report • June to September 2026</p>
+            <p>School Staff Attendance Report • Academic Year 2026–2027</p>
             <p>Login with Teacher ID, Name, or Admin Code <span class="font-mono text-slate-600 font-semibold">9999999</span></p>
         </div>
     </footer>
@@ -450,9 +508,22 @@
             return String(str || '').toLowerCase().replace(/[\s.]+/g, '');
         }
 
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = message;
+            toastIcon.className = isError ? 'fa-solid fa-circle-exclamation text-rose-400' : 'fa-solid fa-circle-check text-emerald-400';
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
         function quickFillLogin(val) {
-            const input = document.getElementById('loginInput');
-            input.value = val;
+            document.getElementById('loginInput').value = val;
             document.getElementById('loginSuggestions').classList.add('hidden');
             document.getElementById('loginError').classList.add('hidden');
             handleLogin(new Event('submit'));
@@ -510,8 +581,7 @@
             if (e && e.preventDefault) e.preventDefault();
             const rawInput = document.getElementById('loginInput').value.trim();
             const errorBox = document.getElementById('loginError');
-            const suggestionsBox = document.getElementById('loginSuggestions');
-            suggestionsBox.classList.add('hidden');
+            document.getElementById('loginSuggestions').classList.add('hidden');
 
             if (!rawInput) return;
 
@@ -682,9 +752,12 @@
                             </span>
                         </td>
                         <td class="py-3.5 px-4 text-center font-bold text-slate-700">${rate}</td>
-                        <td class="py-3.5 px-4 text-right">
-                            <button onclick="inspectMemberFromAdmin('${m.id}')" class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-xs font-bold transition">
-                                View Card
+                        <td class="py-3.5 px-4 text-right space-x-1.5">
+                            <button onclick="openEditModal('${m.id}')" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-500 text-amber-700 hover:text-white text-xs font-bold transition" title="Edit Attendance">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button onclick="inspectMemberFromAdmin('${m.id}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-xs font-bold transition" title="View Card">
+                                <i class="fa-solid fa-eye"></i> View
                             </button>
                         </td>
                     </tr>
@@ -702,6 +775,56 @@
             if (member) {
                 cameFromAdmin = true;
                 openStaffView(member);
+            }
+        }
+
+        // Edit Attendance Functions
+        function openEditModal(empId) {
+            const member = staffMembers.find(m => m.id === empId);
+            if (!member) return;
+
+            document.getElementById('editEmpId').value = member.id;
+            document.getElementById('editEmpDisplay').textContent = `${member.name} (ID: ${member.id}) - ${member.school}`;
+            document.getElementById('editPresentDays').value = member.totalP;
+            document.getElementById('editLeaveDays').value = member.totalA;
+            
+            previewEditCalc();
+
+            const modal = document.getElementById('editAttendanceModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editAttendanceModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function previewEditCalc() {
+            const p = parseInt(document.getElementById('editPresentDays').value) || 0;
+            const a = parseInt(document.getElementById('editLeaveDays').value) || 0;
+            const totalW = p + a;
+            const rate = totalW > 0 ? ((p / totalW) * 100).toFixed(1) + '%' : '0.0%';
+            document.getElementById('editPreviewRate').textContent = rate;
+        }
+
+        function handleSaveAttendance(e) {
+            e.preventDefault();
+            const empId = document.getElementById('editEmpId').value;
+            const newPresent = parseInt(document.getElementById('editPresentDays').value);
+            const newLeave = parseInt(document.getElementById('editLeaveDays').value);
+
+            const member = staffMembers.find(m => m.id === empId);
+            if (member) {
+                member.totalP = newPresent;
+                member.totalA = newLeave;
+                member.totalW = newPresent + newLeave;
+
+                closeEditModal();
+                updateAdminKPIs();
+                renderAdminTable();
+                showToast(`Successfully updated attendance for ${member.name}`);
             }
         }
 
