@@ -3,471 +3,722 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Attendance Portal</title>
+    <title>School Staff Attendance Portal (June - Sept 2026)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-
-        .container {
-            width: 100%;
-            max-width: 650px;
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-            margin: 1rem;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
         }
-
-        h1 {
-            font-size: 1.75rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-            text-align: center;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        p.subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            font-size: 1.1rem;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-            margin-bottom: 0.75rem;
-        }
-
-        input[type="text"]:focus, input[type="number"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        button {
-            width: 100%;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .error-msg {
-            background-color: #fee2e2;
-            color: #991b1b;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            text-align: center;
-            margin-top: 1rem;
-        }
-
-        /* Screens */
-        #result-card, #admin-card {
-            display: none;
-        }
-
-        .welcome-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: #0f172a;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .metric-box {
+        ::-webkit-scrollbar-track {
             background: #f1f5f9;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-align: center;
         }
-
-        .metric-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #64748b;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
-
-        .metric-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .details-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-            max-height: 300px;
-            display: block;
-            overflow-y: auto;
-        }
-
-        .details-table th, .details-table td {
-            padding: 0.6rem 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-            text-align: left;
-        }
-
-        .details-table th {
-            color: #64748b;
-            font-weight: 600;
-            background: #f8fafc;
-            position: sticky;
-            top: 0;
-        }
-
-        .back-btn {
-            background-color: #e2e8f0;
-            color: #475569;
-            margin-top: 0.5rem;
-        }
-
-        .back-btn:hover {
-            background-color: #cbd5e1;
-        }
-
-        .admin-section {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col text-slate-800 selection:bg-indigo-500 selection:text-white">
 
-    <div class="container">
-        <!-- Login Form Screen -->
-        <div id="login-screen">
-            <h1>🏫 Staff Portal</h1>
-            <p class="subtitle">Enter your 7-digit Teacher ID to view attendance</p>
-            
-            <div class="form-group">
-                <label for="teacherIdInput">ID / Admin Code</label>
-                <input type="text" id="teacherIdInput" maxlength="7" placeholder="Enter 7-digit ID" autofocus>
+    <!-- Top Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="logoutToLogin()">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base sm:text-lg leading-tight">School Staff Portal</h1>
+                    <p class="text-xs text-slate-500">Attendance Report • Jun – Sep 2026</p>
+                </div>
             </div>
-            
-            <button onclick="handleLogin()">Log In</button>
-            <div id="error-container"></div>
+
+            <div id="navActions" class="hidden items-center space-x-3">
+                <span id="navRoleBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200"></span>
+                <button onclick="logoutToLogin()" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-700 hover:text-red-600 bg-slate-100 hover:bg-red-50 transition-colors">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
         </div>
+    </header>
 
-        <!-- Teacher Result Screen -->
-        <div id="result-card">
-            <div class="welcome-title" id="res-name">Welcome, Teacher</div>
-            
-            <div class="metrics-grid">
-                <div class="metric-box">
-                    <div class="metric-title">School Name</div>
-                    <div class="metric-value" id="res-school">-</div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="metric-box">
-                        <div class="metric-title">Present Days</div>
-                        <div class="metric-value" id="res-present" style="color: #16a34a;">-</div>
-                    </div>
-                    <div class="metric-box">
-                        <div class="metric-title">Leave Days</div>
-                        <div class="metric-value" id="res-leave" style="color: #dc2626;">-</div>
-                    </div>
-                </div>
-            </div>
-
-            <table class="details-table" style="display: table;">
-                <tr>
-                    <th>Total Working Days</th>
-                    <td id="res-total">-</td>
-                </tr>
-                <tr>
-                    <th>Overall Attendance %</th>
-                    <td id="res-percent">-</td>
-                </tr>
-            </table>
-
-            <button class="back-btn" onclick="handleLogout()">Log Out</button>
-        </div>
-
-        <!-- Admin Panel Screen -->
-        <div id="admin-card">
-            <div class="welcome-title">⚙️ Admin Panel</div>
-            
-            <div class="metrics-grid" style="grid-template-columns: 1fr;">
-                <div class="metric-box" style="background: #e0e7ff;">
-                    <div class="metric-title">Total Registered Members</div>
-                    <div class="metric-value" id="admin-total-count" style="color: #4f46e5; font-size: 1.5rem;">-</div>
-                </div>
-            </div>
-
-            <!-- Add New Member Form -->
-            <div class="admin-section">
-                <h3 style="margin-top: 0; font-size: 1rem; color: #334155;">Add New Member</h3>
-                <input type="text" id="new-school" placeholder="School Name">
-                <input type="text" id="new-name" placeholder="Employee Name">
-                <input type="text" id="new-id" maxlength="7" placeholder="7-Digit Teacher ID">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                    <input type="number" id="new-present" placeholder="Present Days">
-                    <input type="number" id="new-leave" placeholder="Leave Days">
-                </div>
-                <button onclick="addNewStaff()">Add Staff Member</button>
-                <div id="admin-msg" style="margin-top: 0.5rem; font-size: 0.85rem; text-align: center;"></div>
-            </div>
-
-            <h3 style="font-size: 1rem; color: #334155; margin-bottom: 0.5rem;">All Staff Records</h3>
-            <table class="details-table" id="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>School</th>
-                        <th>Present</th>
-                        <th>Leave</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-table-body">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-
-            <button class="back-btn" onclick="handleLogout()">Log Out</button>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 border border-slate-700">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+            <span id="toastMsg" class="text-sm font-medium">Action successful</span>
         </div>
     </div>
 
+    <!-- Main Container -->
+    <main class="flex-grow flex flex-col justify-center max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ==================== 1. LOGIN VIEW ==================== -->
+        <section id="loginView" class="w-full max-w-md mx-auto my-auto">
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
+                <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 p-8 text-white text-center relative overflow-hidden">
+                    <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
+                    <div class="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center mx-auto mb-4 border border-white/20 shadow-inner">
+                        <i class="fa-solid fa-id-card-clip text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-extrabold tracking-tight">Staff Attendance Login</h2>
+                    <p class="text-indigo-100 text-sm mt-1.5">Enter your Teacher ID, Name, or Admin Code</p>
+                </div>
+
+                <div class="p-6 sm:p-8">
+                    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
+                        <div>
+                            <label for="loginInput" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                                Teacher ID Number / Full Name
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <input
+                                    type="text"
+                                    id="loginInput"
+                                    autocomplete="off"
+                                    placeholder="e.g., 1354546, K.VIDYARANI, or 9999999"
+                                    class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition font-medium text-sm"
+                                    oninput="handleLiveSuggestions(this.value)"
+                                    required
+                                >
+                            </div>
+
+                            <!-- Live matching dropdown for multiple or partial name matches -->
+                            <div id="loginSuggestions" class="hidden mt-2 bg-white border border-slate-200 rounded-xl shadow-lg max-h-52 overflow-y-auto divide-y divide-slate-100"></div>
+                        </div>
+
+                        <div id="loginError" class="hidden p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center space-x-2.5">
+                            <i class="fa-solid fa-circle-exclamation text-red-500 text-base"></i>
+                            <span id="loginErrorText">No matching staff member found. Please check your ID or Name.</span>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-semibold shadow-lg shadow-indigo-600/25 transition flex items-center justify-center space-x-2"
+                        >
+                            <span>View Attendance Record</span>
+                            <i class="fa-solid fa-arrow-right text-sm"></i>
+                        </button>
+                    </form>
+
+                    <!-- Quick Tips -->
+                    <div class="mt-7 pt-6 border-t border-slate-100">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 text-center">Quick Access Examples</p>
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <button type="button" onclick="quickFillLogin('1354546')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-3 py-1.5 rounded-lg font-medium transition border border-slate-200">
+                                ID: 1354546 (K.VIDYARANI)
+                            </button>
+                            <button type="button" onclick="quickFillLogin('7007427')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-3 py-1.5 rounded-lg font-medium transition border border-slate-200">
+                                ID: 7007427 (VITHALESHWAR)
+                            </button>
+                            <button type="button" onclick="quickFillLogin('9999999')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-lg font-semibold transition border border-amber-200 flex items-center space-x-1">
+                                <i class="fa-solid fa-shield-halved text-amber-600"></i>
+                                <span>Admin: 9999999</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 2. STAFF DASHBOARD VIEW ==================== -->
+        <section id="staffView" class="hidden w-full max-w-5xl mx-auto space-y-6">
+            <!-- Back / Switch Search Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <button onclick="logoutToLogin()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="Back to Login">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Official Attendance Report</span>
+                        <h2 class="text-lg font-bold text-slate-900" id="empSchoolName">School Name</h2>
+                    </div>
+                </div>
+                <div id="adminReturnBtnContainer" class="hidden">
+                    <button onclick="openAdminPanel()" class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm shadow transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Back to Admin Panel</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Staff Profile Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center space-x-5">
+                        <div id="empAvatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-indigo-500/30 border-2 border-indigo-400/40 flex items-center justify-center text-2xl sm:text-3xl font-extrabold text-white shadow-inner">
+                            KV
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <span id="empSnoBadge" class="px-2.5 py-0.5 rounded-md bg-white/10 text-indigo-200 text-xs font-medium">S.No #1</span>
+                                <span id="empRateBadge" class="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold">86.3% Attendance</span>
+                            </div>
+                            <h3 id="empName" class="text-2xl sm:text-3xl font-extrabold tracking-tight">K.VIDYARANI</h3>
+                            <p class="text-indigo-200 text-sm sm:text-base mt-1 flex items-center space-x-2">
+                                <i class="fa-solid fa-fingerprint text-indigo-400"></i>
+                                <span>Teacher ID: <strong id="empId" class="text-white font-mono tracking-wider">1354546</strong></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Overall Progress Bar -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[220px]">
+                        <div class="flex justify-between items-center text-xs text-indigo-200 mb-1.5">
+                            <span>Overall Attendance Rate</span>
+                            <span id="empPercentText" class="font-bold text-white text-sm">86.3%</span>
+                        </div>
+                        <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5">
+                            <div id="empProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-teal-300 rounded-full transition-all duration-500" style="width: 86.3%"></div>
+                        </div>
+                        <p class="text-[11px] text-indigo-200 mt-2">Calculated across 80 working days</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <!-- Total Working Days -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Working Days</p>
+                        <p id="cardTotalWorking" class="text-4xl font-extrabold text-slate-900 mt-2">80</p>
+                        <p class="text-xs text-slate-500 mt-1">June – September 2026</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                </div>
+
+                <!-- Total Days Present -->
+                <div class="bg-white rounded-2xl p-6 border border-emerald-200 shadow-sm flex items-center justify-between relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-emerald-700">Total Days Present</p>
+                        <p id="cardTotalPresent" class="text-4xl font-extrabold text-emerald-600 mt-2">69</p>
+                        <p class="text-xs text-slate-500 mt-1">Verified present count</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl border border-emerald-100">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+
+                <!-- Total Leave Days -->
+                <div class="bg-white rounded-2xl p-6 border border-rose-200 shadow-sm flex items-center justify-between relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-rose-500"></div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-rose-700">Total Leave Days</p>
+                        <p id="cardTotalAbsent" class="text-4xl font-extrabold text-rose-600 mt-2">9</p>
+                        <p class="text-xs text-slate-500 mt-1">Recorded leave / absences</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl border border-rose-100">
+                        <i class="fa-solid fa-user-xmark"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 3. ADMIN PANEL VIEW ==================== -->
+        <section id="adminView" class="hidden w-full space-y-6">
+            <!-- Admin Header Banner -->
+            <div class="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-1.5">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-bold">
+                        <i class="fa-solid fa-unlock-keyhole"></i>
+                        <span>ADMIN PANEL • CODE 9999999</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">School Staff Attendance Directory</h2>
+                    <p class="text-slate-300 text-sm">Manage staff members, search attendance records across all 55 teachers.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="logoutToLogin()" class="inline-flex items-center space-x-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition border border-white/15">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Exit Admin</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Summary KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Staff Members</span>
+                        <p id="adminTotalMembers" class="text-3xl font-extrabold text-indigo-600 mt-1">55</p>
+                        <span class="text-xs text-slate-500">Registered in report</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Working Days</span>
+                        <p class="text-3xl font-extrabold text-slate-800 mt-1">80</p>
+                        <span class="text-xs text-slate-500">June – September 2026</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Avg. Days Present</span>
+                        <p id="adminAvgPresent" class="text-3xl font-extrabold text-emerald-600 mt-1">69.7</p>
+                        <span class="text-xs text-slate-500">Per staff member</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Overall Attendance</span>
+                        <p id="adminAvgRate" class="text-3xl font-extrabold text-amber-600 mt-1">87.2%</p>
+                        <span class="text-xs text-slate-500">Across all active staff</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search & Filter Bar -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                <div class="relative flex-grow">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input
+                        type="text"
+                        id="adminSearchInput"
+                        oninput="renderAdminTable()"
+                        placeholder="Find staff by Name, Teacher ID, or School Name..."
+                        class="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                    >
+                    <button id="clearSearchBtn" onclick="clearAdminSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <span id="adminShowingCount" class="text-xs font-semibold text-slate-500 whitespace-nowrap">Showing 55 of 55 members</span>
+                </div>
+            </div>
+
+            <!-- Staff Directory Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-800 text-white text-[11px] font-bold uppercase tracking-wider">
+                                <th class="py-3.5 px-4 text-center">S.No</th>
+                                <th class="py-3.5 px-4">School Name</th>
+                                <th class="py-3.5 px-4">Teacher ID</th>
+                                <th class="py-3.5 px-4">Employee Name</th>
+                                <th class="py-3.5 px-4 text-center bg-emerald-900/40 text-emerald-200">Total Present</th>
+                                <th class="py-3.5 px-4 text-center bg-rose-900/40 text-rose-200">Total Leave Days</th>
+                                <th class="py-3.5 px-4 text-center bg-indigo-900/40 text-indigo-200">Total Days</th>
+                                <th class="py-3.5 px-4 text-center">Attendance %</th>
+                                <th class="py-3.5 px-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-slate-200 text-sm">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+            <p>School Staff Attendance Report • June to September 2026</p>
+            <p>Login with Teacher ID, Name, or Admin Code <span class="font-mono text-slate-600 font-semibold">9999999</span></p>
+        </div>
+    </footer>
+
     <script>
-        // Staff Database
-        let staffData = [
-            {"School Name": "MPPS GUNDEGAON", "Employee Name": "K.VIDYARANI", "Teacher ID": "1354546", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
-            {"School Name": "MPPS GUNDEGAON", "Employee Name": "M SUJATHA", "Teacher ID": "1343515", "Total Leave Days": 4, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
-            {"School Name": "MPPS KISANGALLY", "Employee Name": "ABDUL WAJID", "Teacher ID": "1300486", "Total Leave Days": 13, "Total Present Days": 65, "Total Days": 80, "Overall Present %": 0.813},
-            {"School Name": "MPPS KISANGALLY", "Employee Name": "G.S. SHAILAJA", "Teacher ID": "1315852", "Total Leave Days": 22, "Total Present Days": 54, "Total Days": 80, "Overall Present %": 0.675},
-            {"School Name": "MPPS KISANGALLY", "Employee Name": "GOUTAM", "Teacher ID": "459088", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS KISANGALLY", "Employee Name": "Ruqsanabanu", "Teacher ID": "1317832", "Total Leave Days": 10, "Total Present Days": 67, "Total Days": 80, "Overall Present %": 0.838},
-            {"School Name": "MPPS KISANGALLY", "Employee Name": "SYED ANSAR", "Teacher ID": "1336699", "Total Leave Days": 4, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
-            {"School Name": "MPPS KISANGALLY", "Employee Name": "SYED MANZOOR", "Teacher ID": "1318185", "Total Leave Days": 5, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS KUMBHI", "Employee Name": "D GANESH", "Teacher ID": "1351364", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS KUMBHI", "Employee Name": "S CHINNAIAH", "Teacher ID": "1352825", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "MPPS LENDI", "Employee Name": "G NARSING", "Teacher ID": "1314999", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
-            {"School Name": "MPPS LENDI", "Employee Name": "M PRABHAKAR", "Teacher ID": "1343729", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
-            {"School Name": "MPPS LENDI", "Employee Name": "M.RAJESH", "Teacher ID": "1328404", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS LENDI", "Employee Name": "S.SHIVAJI", "Teacher ID": "1327993", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
-            {"School Name": "MPPS PENDHAKUR", "Employee Name": "A.LAXMAN", "Teacher ID": "1328003", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
-            {"School Name": "MPPS PENDHAKUR", "Employee Name": "B.SHARADA", "Teacher ID": "1316541", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
-            {"School Name": "MPPS PENDHAKUR", "Employee Name": "D ANAND", "Teacher ID": "1332213", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "MPPS PENDHAKUR", "Employee Name": "S.PRAMEELA", "Teacher ID": "1330953", "Total Leave Days": 3, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
-            {"School Name": "MPPS PENDHAKUR", "Employee Name": "V.BHAVANI", "Teacher ID": "1315907", "Total Leave Days": 3, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
-            {"School Name": "MPPS PIRAPUR", "Employee Name": "A.SATHISH KUMAR", "Teacher ID": "1316027", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS PIRAPUR", "Employee Name": "G.NARSING", "Teacher ID": "1314999", "Total Leave Days": 13, "Total Present Days": 65, "Total Days": 80, "Overall Present %": 0.813},
-            {"School Name": "MPPS PIRAPUR", "Employee Name": "K.SWAPNA", "Teacher ID": "1320387", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "MPPS RAJURA", "Employee Name": "K VISHNUVARDHAN", "Teacher ID": "1342617", "Total Leave Days": 14, "Total Present Days": 64, "Total Days": 80, "Overall Present %": 0.800},
-            {"School Name": "MPPS RAJURA", "Employee Name": "M.LAXMI", "Teacher ID": "1336696", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS RAJURA", "Employee Name": "P.VANITHA", "Teacher ID": "1317180", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
-            {"School Name": "MPPS RAJURA", "Employee Name": "SHAHEEN BEGUM", "Teacher ID": "1317424", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "ZPHS KOTALGAON", "Employee Name": "G. PUNDALIK", "Teacher ID": "1317984", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
-            {"School Name": "MPPS SALURA", "Employee Name": "G.LAVANYA", "Teacher ID": "1320953", "Total Leave Days": 16, "Total Present Days": 62, "Total Days": 80, "Overall Present %": 0.775},
-            {"School Name": "MPPS SALURA", "Employee Name": "K.MADHURI", "Teacher ID": "1343731", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
-            {"School Name": "MPPS SALURA", "Employee Name": "M.JAGAN", "Teacher ID": "1344449", "Total Leave Days": 11, "Total Present Days": 67, "Total Days": 80, "Overall Present %": 0.838},
-            {"School Name": "MPPS SALURA", "Employee Name": "S.SANDEEP", "Teacher ID": "1320092", "Total Leave Days": 10, "Total Present Days": 68, "Total Days": 80, "Overall Present %": 0.850},
-            {"School Name": "MPPS SANGVI", "Employee Name": "G.SHANKAR", "Teacher ID": "1328004", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
-            {"School Name": "MPPS SANGVI", "Employee Name": "K.SAIDULU", "Teacher ID": "1317181", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "MPPS SANGVI", "Employee Name": "M.SWAPNA", "Teacher ID": "1320388", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "MPPS SANGVI", "Employee Name": "P.SRINIVAS", "Teacher ID": "1342618", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
-            {"School Name": "MPPS WADGAON", "Employee Name": "CH.RAMESH", "Teacher ID": "1332214", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
-            {"School Name": "MPPS WADGAON", "Employee Name": "G.RAJENDER", "Teacher ID": "1316542", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "MPPS WADGAON", "Employee Name": "K.SRIDEVI", "Teacher ID": "1315908", "Total Leave Days": 4, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
-            {"School Name": "MPPS WADGAON", "Employee Name": "M.RAVI", "Teacher ID": "1330954", "Total Leave Days": 5, "Total Present Days": 73, "Total Days": 80, "Overall Present %": 0.913},
-            {"School Name": "UPS KAPSIS", "Employee Name": "A.ANJANEYULU", "Teacher ID": "1316028", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "UPS KAPSIS", "Employee Name": "B.RAJESHWARI", "Teacher ID": "1317425", "Total Leave Days": 10, "Total Present Days": 68, "Total Days": 80, "Overall Present %": 0.850},
-            {"School Name": "UPS KAPSIS", "Employee Name": "K.SRINIVAS", "Teacher ID": "1344450", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "UPS KAPSIS", "Employee Name": "M.SANDHYA", "Teacher ID": "1320093", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
-            {"School Name": "UPS LOHNI", "Employee Name": "G.KAVITHA", "Teacher ID": "1320954", "Total Leave Days": 11, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
-            {"School Name": "UPS LOHNI", "Employee Name": "K.RAMESH", "Teacher ID": "1343732", "Total Leave Days": 5, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
-            {"School Name": "UPS LOHNI", "Employee Name": "M.SUNIL", "Teacher ID": "1314998", "Total Leave Days": 7, "Total Present Days": 73, "Total Days": 80, "Overall Present %": 0.913},
-            {"School Name": "UPS LOHNI", "Employee Name": "S.GEETHA", "Teacher ID": "1327992", "Total Leave Days": 9, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "A.VISHNUVARDHAN", "Teacher ID": "1328403", "Total Leave Days": 8, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "B.ANITA", "Teacher ID": "1332212", "Total Leave Days": 5, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "C.RAMESH", "Teacher ID": "1316540", "Total Leave Days": 12, "Total Present Days": 68, "Total Days": 80, "Overall Present %": 0.850},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "G.VENKATESH", "Teacher ID": "1315906", "Total Leave Days": 7, "Total Present Days": 73, "Total Days": 80, "Overall Present %": 0.913},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "K.RAKESH", "Teacher ID": "1330952", "Total Leave Days": 9, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "M.KAVITHA", "Teacher ID": "1316026", "Total Leave Days": 6, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "P.SRINIVAS", "Teacher ID": "1317423", "Total Leave Days": 10, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "S.RAMESH", "Teacher ID": "1344448", "Total Leave Days": 4, "Total Present Days": 76, "Total Days": 80, "Overall Present %": 0.950},
-            {"School Name": "ZPHS MAHAGAON", "Employee Name": "V.SURESH", "Teacher ID": "1320091", "Total Leave Days": 8, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900}
+        const ADMIN_CODE = "9999999";
+        let cameFromAdmin = false;
+
+        // Corrected dataset from the Excel sheet (55 Staff Members)
+        const staffMembers = [
+            { sno: 1, id: "1354546", name: "K.VIDYARANI", school: "MPPS GUNDEGAON", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 2, id: "1343515", name: "M SUJATHA", school: "MPPS GUNDEGAON", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 3, id: "1300486", name: "ABDUL WAJID", school: "MPPS KISANGALLY", totalP: 65, totalA: 13, totalW: 80 },
+            { sno: 4, id: "1315852", name: "G.S. SHAILAJA", school: "MPPS KISANGALLY", totalP: 54, totalA: 22, totalW: 80 },
+            { sno: 5, id: "459088", name: "GOUTAM", school: "MPPS KISANGALLY", totalP: 71, totalA: 7, totalW: 80 },
+            { sno: 6, id: "1317832", name: "Ruqsanabanu", school: "MPPS KISANGALLY", totalP: 67, totalA: 10, totalW: 80 },
+            { sno: 7, id: "1336699", name: "SYED ANSAR", school: "MPPS KISANGALLY", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 8, id: "1318185", name: "SYED MANZOOR", school: "MPPS KISANGALLY", totalP: 71, totalA: 5, totalW: 80 },
+            { sno: 9, id: "1351364", name: "D GANESH", school: "MPPS KUMBHI", totalP: 71, totalA: 7, totalW: 80 },
+            { sno: 10, id: "1352825", name: "S CHINNAIAH", school: "MPPS KUMBHI", totalP: 70, totalA: 8, totalW: 80 },
+            { sno: 11, id: "1354553", name: "B.SAINATH", school: "MPPS LINGA", totalP: 73, totalA: 5, totalW: 80 },
+            { sno: 12, id: "1354740", name: "ABHISHEK", school: "MPPS MAHAGAON", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 13, id: "263123", name: "GADI SRILATHA", school: "MPPS MAHAGAON", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 14, id: "1307903", name: "N KRISHNA", school: "MPPS MAHAGAON", totalP: 73, totalA: 5, totalW: 80 },
+            { sno: 15, id: "1354755", name: "S RAGINI", school: "MPPS MAHAGAON", totalP: 73, totalA: 5, totalW: 80 },
+            { sno: 16, id: "1351711", name: "T.HARISH", school: "MPPS MAHAGAON", totalP: 72, totalA: 6, totalW: 80 },
+            { sno: 17, id: "1318014", name: "K.APARNADEVI", school: "MPPS MIRZAPUR (TM)", totalP: 63, totalA: 16, totalW: 80 },
+            { sno: 18, id: "1317978", name: "NEELIMA DIXIT", school: "MPPS MIRZAPUR (TM)", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 19, id: "1336684", name: "SUNKAM.MUTHANNA", school: "MPPS MIRZAPUR (TM)", totalP: 73, totalA: 6, totalW: 80 },
+            { sno: 20, id: "1352060", name: "T.SUBHASHINI", school: "MPPS SIDDHARTHA NAGAR", totalP: 68, totalA: 10, totalW: 80 },
+            { sno: 21, id: "1318076", name: "B.BALAJI", school: "MPPS SIDDUR", totalP: 73, totalA: 6, totalW: 80 },
+            { sno: 22, id: "1318051", name: "D.GAJENDAR", school: "MPPS SIDDUR", totalP: 76, totalA: 3, totalW: 80 },
+            { sno: 23, id: "1322572", name: "S.GANESH", school: "MPPS TAKLI", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 24, id: "1354954", name: "S.AKSHARA", school: "MPPS TAKLI", totalP: 66, totalA: 12, totalW: 80 },
+            { sno: 25, id: "1351663", name: "C.GNANESHWARI", school: "MPUPS CHINTALABORI", totalP: 66, totalA: 9, totalW: 80 },
+            { sno: 26, id: "1351673", name: "K PANDARI", school: "MPUPS CHINTALABORI", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 27, id: "1354724", name: "U arunraj", school: "MPUPS CHINTALABORI", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 28, id: "1318042", name: "A.SRINIVAS", school: "ZPHS KOTALGAON", totalP: 72, totalA: 6, totalW: 80 },
+            { sno: 29, id: "1317984", name: "G. PUNDALIK", school: "ZPHS KOTALGAON", totalP: 66, totalA: 12, totalW: 80 },
+            { sno: 30, id: "122686266", name: "HANMANTHOLA SUBASH", school: "ZPHS KOTALGAON", totalP: 71, totalA: 7, totalW: 80 },
+            { sno: 31, id: "1317928", name: "J SAHEB RAO", school: "ZPHS KOTALGAON", totalP: 63, totalA: 14, totalW: 80 },
+            { sno: 32, id: "1336901", name: "K. RAJENDER RAJU", school: "ZPHS KOTALGAON", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 33, id: "122686310", name: "KANDELA MOUNIKA", school: "ZPHS KOTALGAON", totalP: 63, totalA: 15, totalW: 80 },
+            { sno: 34, id: "1318082", name: "M. PRAMOD", school: "ZPHS KOTALGAON", totalP: 67, totalA: 11, totalW: 80 },
+            { sno: 35, id: "1317803", name: "T GANGA MOHAN", school: "ZPHS KOTALGAON", totalP: 70, totalA: 8, totalW: 80 },
+            { sno: 36, id: "1322931", name: "T SAROJA", school: "ZPHS KOTALGAON", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 37, id: "1317933", name: "A.SAYAREDDY", school: "ZPHS MAHAGAON", totalP: 69, totalA: 9, totalW: 80 },
+            { sno: 38, id: "122688238", name: "CHAMPATH CHAVAN", school: "ZPHS MAHAGAON", totalP: 66, totalA: 11, totalW: 80 },
+            { sno: 39, id: "1317774", name: "G. CHINNANNA", school: "ZPHS MAHAGAON", totalP: 72, totalA: 6, totalW: 80 },
+            { sno: 40, id: "1318072", name: "J SHIVARAM", school: "ZPHS MAHAGAON", totalP: 72, totalA: 6, totalW: 80 },
+            { sno: 41, id: "1318009", name: "MUTHAM REDDY", school: "ZPHS MAHAGAON", totalP: 67, totalA: 11, totalW: 80 },
+            { sno: 42, id: "2022176", name: "N. KANAKA RAJU", school: "ZPHS MAHAGAON", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 43, id: "1354527", name: "R VIKRANTH", school: "ZPHS MAHAGAON", totalP: 70, totalA: 8, totalW: 80 },
+            { sno: 44, id: "1338510", name: "T SHARADA", school: "ZPHS MAHAGAON", totalP: 68, totalA: 10, totalW: 80 },
+            { sno: 45, id: "1317775", name: "UPENDRA JOSHI", school: "ZPHS MAHAGAON", totalP: 71, totalA: 7, totalW: 80 },
+            { sno: 46, id: "122688119", name: "VARSHA PADAKANTI", school: "ZPHS MAHAGAON", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 47, id: "7007427", name: "VITHALESHWAR", school: "ZPHS MAHAGAON", totalP: 78, totalA: 2, totalW: 80 },
+            { sno: 48, id: "1336894", name: "D.KRISHNA RAO", school: "ZPHS MIRZAPUR (TM)", totalP: 70, totalA: 8, totalW: 80 },
+            { sno: 49, id: "1317802", name: "E. JANARDHAN", school: "ZPHS MIRZAPUR (TM)", totalP: 73, totalA: 5, totalW: 80 },
+            { sno: 50, id: "2022782", name: "K.JEDIYA", school: "ZPHS MIRZAPUR (TM)", totalP: 61, totalA: 18, totalW: 80 },
+            { sno: 51, id: "1317742", name: "L. SATYANARAYANA", school: "ZPHS MIRZAPUR (TM)", totalP: 63, totalA: 15, totalW: 80 },
+            { sno: 52, id: "1318097", name: "MAHALINGAI POSHETTY", school: "ZPHS MIRZAPUR (TM)", totalP: 63, totalA: 15, totalW: 80 },
+            { sno: 53, id: "1336512", name: "Mallikarjunrao", school: "ZPHS MIRZAPUR (TM)", totalP: 75, totalA: 3, totalW: 80 },
+            { sno: 54, id: "1317827", name: "P SARANATH", school: "ZPHS MIRZAPUR (TM)", totalP: 74, totalA: 4, totalW: 80 },
+            { sno: 55, id: "1322489", name: "RAJESHWER", school: "ZPHS MIRZAPUR (TM)", totalP: 73, totalA: 5, totalW: 80 }
         ];
 
-        const ADMIN_CODE = "9999999"; // Secret 7-digit code for Admin Panel
+        function normalizeText(str) {
+            return String(str || '').toLowerCase().replace(/[\s.]+/g, '');
+        }
 
-        function handleLogin() {
-            const inputVal = document.getElementById('teacherIdInput').value.trim();
-            const errorContainer = document.getElementById('error-container');
-            errorContainer.innerHTML = '';
+        function quickFillLogin(val) {
+            const input = document.getElementById('loginInput');
+            input.value = val;
+            document.getElementById('loginSuggestions').classList.add('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            handleLogin(new Event('submit'));
+        }
 
-            if (inputVal.length !== 7) {
-                errorContainer.innerHTML = `<div class="error-msg">Please enter a valid 7-digit ID.</div>`;
+        function handleLiveSuggestions(val) {
+            const box = document.getElementById('loginSuggestions');
+            const err = document.getElementById('loginError');
+            err.classList.add('hidden');
+
+            const trimmed = val.trim();
+            if (!trimmed || trimmed === ADMIN_CODE) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
                 return;
             }
 
-            // Check if Admin
-            if (inputVal === ADMIN_CODE) {
+            const norm = normalizeText(trimmed);
+            const matches = staffMembers.filter(m =>
+                m.id.toLowerCase().includes(trimmed.toLowerCase()) ||
+                normalizeText(m.name).includes(norm) ||
+                m.name.toLowerCase().includes(trimmed.toLowerCase())
+            );
+
+            if (matches.length === 0) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+                return;
+            }
+
+            box.innerHTML = matches.map(m => `
+                <button type="button" onclick="selectSuggestion('${m.id}')" class="w-full px-4 py-2.5 text-left hover:bg-indigo-50 flex items-center justify-between transition">
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">${m.name}</p>
+                        <p class="text-xs text-slate-500">${m.school} • ID: <span class="font-mono font-semibold text-indigo-600">${m.id}</span></p>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        ${m.totalP}/${m.totalW} Present
+                    </span>
+                </button>
+            `).join('');
+            box.classList.remove('hidden');
+        }
+
+        function selectSuggestion(empId) {
+            const member = staffMembers.find(m => m.id === empId);
+            if (member) {
+                document.getElementById('loginSuggestions').classList.add('hidden');
+                cameFromAdmin = false;
+                openStaffView(member);
+            }
+        }
+
+        function handleLogin(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const rawInput = document.getElementById('loginInput').value.trim();
+            const errorBox = document.getElementById('loginError');
+            const suggestionsBox = document.getElementById('loginSuggestions');
+            suggestionsBox.classList.add('hidden');
+
+            if (!rawInput) return;
+
+            if (rawInput === ADMIN_CODE) {
+                errorBox.classList.add('hidden');
                 openAdminPanel();
                 return;
             }
 
-            // Check if Teacher
-            const foundTeacher = staffData.find(t => t["Teacher ID"] === inputVal);
+            let match = staffMembers.find(m => m.id.toLowerCase() === rawInput.toLowerCase());
 
-            if (foundTeacher) {
-                document.getElementById('res-name').innerText = `Welcome, ${foundTeacher["Employee Name"]}!`;
-                document.getElementById('res-school').innerText = foundTeacher["School Name"];
-                document.getElementById('res-present').innerText = foundTeacher["Total Present Days"];
-                document.getElementById('res-leave').innerText = foundTeacher["Total Leave Days"];
-                document.getElementById('res-total').innerText = foundTeacher["Total Days"];
-                document.getElementById('res-percent').innerText = (foundTeacher["Overall Present %"] * 100).toFixed(1) + '%';
-
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('result-card').style.display = 'block';
-            } else {
-                errorContainer.innerHTML = `<div class="error-msg">ID not found in records.</div>`;
+            if (!match) {
+                const norm = normalizeText(rawInput);
+                match = staffMembers.find(m => normalizeText(m.name) === norm);
             }
+
+            if (!match) {
+                const norm = normalizeText(rawInput);
+                const partialMatches = staffMembers.filter(m =>
+                    m.id.toLowerCase().includes(rawInput.toLowerCase()) ||
+                    normalizeText(m.name).includes(norm)
+                );
+
+                if (partialMatches.length === 1) {
+                    match = partialMatches[0];
+                } else if (partialMatches.length > 1) {
+                    handleLiveSuggestions(rawInput);
+                    return;
+                }
+            }
+
+            if (match) {
+                errorBox.classList.add('hidden');
+                cameFromAdmin = false;
+                openStaffView(match);
+            } else {
+                errorBox.classList.remove('hidden');
+            }
+        }
+
+        function getInitials(name) {
+            const parts = name.replace(/\./g, ' ').split(/\s+/).filter(Boolean);
+            if (parts.length === 0) return 'ST';
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        function openStaffView(member) {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('staffView').classList.remove('hidden');
+
+            const navActions = document.getElementById('navActions');
+            const navRoleBadge = document.getElementById('navRoleBadge');
+            navActions.classList.remove('hidden');
+            navActions.classList.add('flex');
+            navRoleBadge.textContent = cameFromAdmin ? 'Admin Inspecting Staff' : `Teacher ID: ${member.id}`;
+
+            const adminReturnBtn = document.getElementById('adminReturnBtnContainer');
+            if (cameFromAdmin) {
+                adminReturnBtn.classList.remove('hidden');
+            } else {
+                adminReturnBtn.classList.add('hidden');
+            }
+
+            const rate = member.totalW > 0 ? ((member.totalP / member.totalW) * 100).toFixed(1) : '0.0';
+
+            document.getElementById('empSchoolName').textContent = member.school;
+            document.getElementById('empAvatar').textContent = getInitials(member.name);
+            document.getElementById('empSnoBadge').textContent = `S.No #${member.sno}`;
+            document.getElementById('empRateBadge').textContent = `${rate}% Attendance`;
+            document.getElementById('empName').textContent = member.name;
+            document.getElementById('empId').textContent = member.id;
+            document.getElementById('empPercentText').textContent = `${rate}%`;
+            document.getElementById('empProgressBar').style.width = `${Math.min(100, parseFloat(rate))}%`;
+
+            document.getElementById('cardTotalWorking').textContent = member.totalW;
+            document.getElementById('cardTotalPresent').textContent = member.totalP;
+            document.getElementById('cardTotalAbsent').textContent = member.totalA;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function openAdminPanel() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('admin-card').style.display = 'block';
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('staffView').classList.add('hidden');
+            document.getElementById('adminView').classList.remove('hidden');
+
+            const navActions = document.getElementById('navActions');
+            const navRoleBadge = document.getElementById('navRoleBadge');
+            navActions.classList.remove('hidden');
+            navActions.classList.add('flex');
+            navRoleBadge.textContent = 'Administrator (9999999)';
+
+            updateAdminKPIs();
             renderAdminTable();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateAdminKPIs() {
+            const totalMembers = staffMembers.length;
+            const sumPresent = staffMembers.reduce((acc, m) => acc + m.totalP, 0);
+            const sumWorking = staffMembers.reduce((acc, m) => acc + m.totalW, 0);
+
+            const avgPresent = totalMembers > 0 ? (sumPresent / totalMembers).toFixed(1) : '0.0';
+            const overallRate = sumWorking > 0 ? ((sumPresent / sumWorking) * 100).toFixed(1) + '%' : '0.0%';
+
+            document.getElementById('adminTotalMembers').textContent = totalMembers;
+            document.getElementById('adminAvgPresent').textContent = avgPresent;
+            document.getElementById('adminAvgRate').textContent = overallRate;
         }
 
         function renderAdminTable() {
-            document.getElementById('admin-total-count').innerText = staffData.length;
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = '';
+            const query = (document.getElementById('adminSearchInput').value || '').trim();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
 
-            staffData.forEach(staff => {
-                const row = `<tr>
-                    <td>${staff["Teacher ID"]}</td>
-                    <td>${staff["Employee Name"]}</td>
-                    <td>${staff["School Name"]}</td>
-                    <td style="color: #16a34a; font-weight:600;">${staff["Total Present Days"]}</td>
-                    <td style="color: #dc2626; font-weight:600;">${staff["Total Leave Days"]}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
+            const norm = normalizeText(query);
+            const filtered = staffMembers.filter(m =>
+                !query ||
+                m.id.toLowerCase().includes(query.toLowerCase()) ||
+                normalizeText(m.name).includes(norm) ||
+                m.name.toLowerCase().includes(query.toLowerCase()) ||
+                normalizeText(m.school).includes(norm) ||
+                m.school.toLowerCase().includes(query.toLowerCase())
+            );
+
+            document.getElementById('adminShowingCount').textContent = `Showing ${filtered.length} of ${staffMembers.length} members`;
+
+            const tbody = document.getElementById('adminTableBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="py-12 text-center text-slate-400">
+                            <i class="fa-solid fa-user-slash text-2xl mb-2 block"></i>
+                            No staff members match "<strong class="text-slate-600">${query}</strong>"
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(m => {
+                const rate = ((m.totalP / m.totalW) * 100).toFixed(1) + '%';
+                return `
+                    <tr class="hover:bg-indigo-50/40 transition">
+                        <td class="py-3.5 px-4 text-center font-semibold text-slate-500">${m.sno}</td>
+                        <td class="py-3.5 px-4 font-semibold text-slate-700 text-xs">${m.school}</td>
+                        <td class="py-3.5 px-4 font-mono font-bold text-indigo-600">${m.id}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-900">${m.name}</td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-block px-2.5 py-1 rounded-lg font-extrabold text-xs bg-emerald-100 text-emerald-800">
+                                ${m.totalP}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-block px-2.5 py-1 rounded-lg font-extrabold text-xs bg-rose-100 text-rose-800">
+                                ${m.totalA}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-block px-2.5 py-1 rounded-lg font-extrabold text-xs bg-indigo-100 text-indigo-800">
+                                ${m.totalW}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-center font-bold text-slate-700">${rate}</td>
+                        <td class="py-3.5 px-4 text-right">
+                            <button onclick="inspectMemberFromAdmin('${m.id}')" class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-xs font-bold transition">
+                                View Card
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        function addNewStaff() {
-            const school = document.getElementById('new-school').value.trim();
-            const name = document.getElementById('new-name').value.trim();
-            const id = document.getElementById('new-id').value.trim();
-            const present = parseInt(document.getElementById('new-present').value) || 0;
-            const leave = parseInt(document.getElementById('new-leave').value) || 0;
-            const msg = document.getElementById('admin-msg');
-
-            if (!school || !name || id.length !== 7) {
-                msg.style.color = "#dc2626";
-                msg.innerText = "Please fill in all fields with a valid 7-digit ID.";
-                return;
-            }
-
-            // Check if ID already exists
-            if (staffData.some(t => t["Teacher ID"] === id)) {
-                msg.style.color = "#dc2626";
-                msg.innerText = "A teacher with this ID already exists!";
-                return;
-            }
-
-            const totalDays = present + leave;
-            const percent = totalDays > 0 ? present / totalDays : 0;
-
-            staffData.push({
-                "School Name": school.toUpperCase(),
-                "Employee Name": name.toUpperCase(),
-                "Teacher ID": id,
-                "Total Leave Days": leave,
-                "Total Present Days": present,
-                "Total Days": totalDays,
-                "Overall Present %": percent
-            });
-
-            // Clear form and refresh table
-            document.getElementById('new-school').value = '';
-            document.getElementById('new-name').value = '';
-            document.getElementById('new-id').value = '';
-            document.getElementById('new-present').value = '';
-            document.getElementById('new-leave').value = '';
-
-            msg.style.color = "#16a34a";
-            msg.innerText = "Successfully added new staff member!";
+        function clearAdminSearch() {
+            document.getElementById('adminSearchInput').value = '';
             renderAdminTable();
         }
 
-        function handleLogout() {
-            document.getElementById('teacherIdInput').value = '';
-            document.getElementById('error-container').innerHTML = '';
-            document.getElementById('admin-msg').innerHTML = '';
-            document.getElementById('result-card').style.display = 'none';
-            document.getElementById('admin-card').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'block';
-            document.getElementById('teacherIdInput').focus();
+        function inspectMemberFromAdmin(empId) {
+            const member = staffMembers.find(m => m.id === empId);
+            if (member) {
+                cameFromAdmin = true;
+                openStaffView(member);
+            }
         }
 
-        document.getElementById('teacherIdInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleLogin();
-            }
-        });
+        function logoutToLogin() {
+            cameFromAdmin = false;
+            document.getElementById('staffView').classList.add('hidden');
+            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('loginView').classList.remove('hidden');
+
+            const navActions = document.getElementById('navActions');
+            navActions.classList.add('hidden');
+            navActions.classList.remove('flex');
+
+            document.getElementById('loginInput').value = '';
+            document.getElementById('loginSuggestions').classList.add('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+        }
     </script>
 </body>
 </html>
