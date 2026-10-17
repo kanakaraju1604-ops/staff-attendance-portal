@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Attendance Portal</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            margin: 1rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 0.75rem;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .error-msg {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        /* Screens */
+        #result-card, #admin-card {
+            display: none;
+        }
+
+        .welcome-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #0f172a;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-box {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .metric-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            max-height: 300px;
+            display: block;
+            overflow-y: auto;
+        }
+
+        .details-table th, .details-table td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .details-table th {
+            color: #64748b;
+            font-weight: 600;
+            background: #f8fafc;
+            position: sticky;
+            top: 0;
+        }
+
+        .back-btn {
+            background-color: #e2e8f0;
+            color: #475569;
+            margin-top: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background-color: #cbd5e1;
+        }
+
+        .admin-section {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Login Form Screen -->
+        <div id="login-screen">
+            <h1>🏫 Staff Portal</h1>
+            <p class="subtitle">Enter your 7-digit Teacher ID to view attendance</p>
+            
+            <div class="form-group">
+                <label for="teacherIdInput">ID / Admin Code</label>
+                <input type="text" id="teacherIdInput" maxlength="7" placeholder="Enter 7-digit ID" autofocus>
+            </div>
+            
+            <button onclick="handleLogin()">Log In</button>
+            <div id="error-container"></div>
+        </div>
+
+        <!-- Teacher Result Screen -->
+        <div id="result-card">
+            <div class="welcome-title" id="res-name">Welcome, Teacher</div>
+            
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-title">School Name</div>
+                    <div class="metric-value" id="res-school">-</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="metric-box">
+                        <div class="metric-title">Present Days</div>
+                        <div class="metric-value" id="res-present" style="color: #16a34a;">-</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title">Leave Days</div>
+                        <div class="metric-value" id="res-leave" style="color: #dc2626;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="details-table" style="display: table;">
+                <tr>
+                    <th>Total Working Days</th>
+                    <td id="res-total">-</td>
+                </tr>
+                <tr>
+                    <th>Overall Attendance %</th>
+                    <td id="res-percent">-</td>
+                </tr>
+            </table>
+
+            <button class="back-btn" onclick="handleLogout()">Log Out</button>
+        </div>
+
+        <!-- Admin Panel Screen -->
+        <div id="admin-card">
+            <div class="welcome-title">⚙️ Admin Panel</div>
+            
+            <div class="metrics-grid" style="grid-template-columns: 1fr;">
+                <div class="metric-box" style="background: #e0e7ff;">
+                    <div class="metric-title">Total Registered Members</div>
+                    <div class="metric-value" id="admin-total-count" style="color: #4f46e5; font-size: 1.5rem;">-</div>
+                </div>
+            </div>
+
+            <!-- Add New Member Form -->
+            <div class="admin-section">
+                <h3 style="margin-top: 0; font-size: 1rem; color: #334155;">Add New Member</h3>
+                <input type="text" id="new-school" placeholder="School Name">
+                <input type="text" id="new-name" placeholder="Employee Name">
+                <input type="text" id="new-id" maxlength="7" placeholder="7-Digit Teacher ID">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <input type="number" id="new-present" placeholder="Present Days">
+                    <input type="number" id="new-leave" placeholder="Leave Days">
+                </div>
+                <button onclick="addNewStaff()">Add Staff Member</button>
+                <div id="admin-msg" style="margin-top: 0.5rem; font-size: 0.85rem; text-align: center;"></div>
+            </div>
+
+            <h3 style="font-size: 1rem; color: #334155; margin-bottom: 0.5rem;">All Staff Records</h3>
+            <table class="details-table" id="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>School</th>
+                        <th>Present</th>
+                        <th>Leave</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+
+            <button class="back-btn" onclick="handleLogout()">Log Out</button>
+        </div>
+    </div>
+
+    <script>
+        // Staff Database
+        let staffData = [
+            {"School Name": "MPPS GUNDEGAON", "Employee Name": "K.VIDYARANI", "Teacher ID": "1354546", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
+            {"School Name": "MPPS GUNDEGAON", "Employee Name": "M SUJATHA", "Teacher ID": "1343515", "Total Leave Days": 4, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
+            {"School Name": "MPPS KISANGALLY", "Employee Name": "ABDUL WAJID", "Teacher ID": "1300486", "Total Leave Days": 13, "Total Present Days": 65, "Total Days": 80, "Overall Present %": 0.813},
+            {"School Name": "MPPS KISANGALLY", "Employee Name": "G.S. SHAILAJA", "Teacher ID": "1315852", "Total Leave Days": 22, "Total Present Days": 54, "Total Days": 80, "Overall Present %": 0.675},
+            {"School Name": "MPPS KISANGALLY", "Employee Name": "GOUTAM", "Teacher ID": "459088", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS KISANGALLY", "Employee Name": "Ruqsanabanu", "Teacher ID": "1317832", "Total Leave Days": 10, "Total Present Days": 67, "Total Days": 80, "Overall Present %": 0.838},
+            {"School Name": "MPPS KISANGALLY", "Employee Name": "SYED ANSAR", "Teacher ID": "1336699", "Total Leave Days": 4, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
+            {"School Name": "MPPS KISANGALLY", "Employee Name": "SYED MANZOOR", "Teacher ID": "1318185", "Total Leave Days": 5, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS KUMBHI", "Employee Name": "D GANESH", "Teacher ID": "1351364", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS KUMBHI", "Employee Name": "S CHINNAIAH", "Teacher ID": "1352825", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "MPPS LENDI", "Employee Name": "G NARSING", "Teacher ID": "1314999", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
+            {"School Name": "MPPS LENDI", "Employee Name": "M PRABHAKAR", "Teacher ID": "1343729", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
+            {"School Name": "MPPS LENDI", "Employee Name": "M.RAJESH", "Teacher ID": "1328404", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS LENDI", "Employee Name": "S.SHIVAJI", "Teacher ID": "1327993", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
+            {"School Name": "MPPS PENDHAKUR", "Employee Name": "A.LAXMAN", "Teacher ID": "1328003", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
+            {"School Name": "MPPS PENDHAKUR", "Employee Name": "B.SHARADA", "Teacher ID": "1316541", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
+            {"School Name": "MPPS PENDHAKUR", "Employee Name": "D ANAND", "Teacher ID": "1332213", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "MPPS PENDHAKUR", "Employee Name": "S.PRAMEELA", "Teacher ID": "1330953", "Total Leave Days": 3, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
+            {"School Name": "MPPS PENDHAKUR", "Employee Name": "V.BHAVANI", "Teacher ID": "1315907", "Total Leave Days": 3, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
+            {"School Name": "MPPS PIRAPUR", "Employee Name": "A.SATHISH KUMAR", "Teacher ID": "1316027", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS PIRAPUR", "Employee Name": "G.NARSING", "Teacher ID": "1314999", "Total Leave Days": 13, "Total Present Days": 65, "Total Days": 80, "Overall Present %": 0.813},
+            {"School Name": "MPPS PIRAPUR", "Employee Name": "K.SWAPNA", "Teacher ID": "1320387", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "MPPS RAJURA", "Employee Name": "K VISHNUVARDHAN", "Teacher ID": "1342617", "Total Leave Days": 14, "Total Present Days": 64, "Total Days": 80, "Overall Present %": 0.800},
+            {"School Name": "MPPS RAJURA", "Employee Name": "M.LAXMI", "Teacher ID": "1336696", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS RAJURA", "Employee Name": "P.VANITHA", "Teacher ID": "1317180", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
+            {"School Name": "MPPS RAJURA", "Employee Name": "SHAHEEN BEGUM", "Teacher ID": "1317424", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "ZPHS KOTALGAON", "Employee Name": "G. PUNDALIK", "Teacher ID": "1317984", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
+            {"School Name": "MPPS SALURA", "Employee Name": "G.LAVANYA", "Teacher ID": "1320953", "Total Leave Days": 16, "Total Present Days": 62, "Total Days": 80, "Overall Present %": 0.775},
+            {"School Name": "MPPS SALURA", "Employee Name": "K.MADHURI", "Teacher ID": "1343731", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
+            {"School Name": "MPPS SALURA", "Employee Name": "M.JAGAN", "Teacher ID": "1344449", "Total Leave Days": 11, "Total Present Days": 67, "Total Days": 80, "Overall Present %": 0.838},
+            {"School Name": "MPPS SALURA", "Employee Name": "S.SANDEEP", "Teacher ID": "1320092", "Total Leave Days": 10, "Total Present Days": 68, "Total Days": 80, "Overall Present %": 0.850},
+            {"School Name": "MPPS SANGVI", "Employee Name": "G.SHANKAR", "Teacher ID": "1328004", "Total Leave Days": 9, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
+            {"School Name": "MPPS SANGVI", "Employee Name": "K.SAIDULU", "Teacher ID": "1317181", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "MPPS SANGVI", "Employee Name": "M.SWAPNA", "Teacher ID": "1320388", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "MPPS SANGVI", "Employee Name": "P.SRINIVAS", "Teacher ID": "1342618", "Total Leave Days": 12, "Total Present Days": 66, "Total Days": 80, "Overall Present %": 0.825},
+            {"School Name": "MPPS WADGAON", "Employee Name": "CH.RAMESH", "Teacher ID": "1332214", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
+            {"School Name": "MPPS WADGAON", "Employee Name": "G.RAJENDER", "Teacher ID": "1316542", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "MPPS WADGAON", "Employee Name": "K.SRIDEVI", "Teacher ID": "1315908", "Total Leave Days": 4, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
+            {"School Name": "MPPS WADGAON", "Employee Name": "M.RAVI", "Teacher ID": "1330954", "Total Leave Days": 5, "Total Present Days": 73, "Total Days": 80, "Overall Present %": 0.913},
+            {"School Name": "UPS KAPSIS", "Employee Name": "A.ANJANEYULU", "Teacher ID": "1316028", "Total Leave Days": 7, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "UPS KAPSIS", "Employee Name": "B.RAJESHWARI", "Teacher ID": "1317425", "Total Leave Days": 10, "Total Present Days": 68, "Total Days": 80, "Overall Present %": 0.850},
+            {"School Name": "UPS KAPSIS", "Employee Name": "K.SRINIVAS", "Teacher ID": "1344450", "Total Leave Days": 8, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "UPS KAPSIS", "Employee Name": "M.SANDHYA", "Teacher ID": "1320093", "Total Leave Days": 6, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
+            {"School Name": "UPS LOHNI", "Employee Name": "G.KAVITHA", "Teacher ID": "1320954", "Total Leave Days": 11, "Total Present Days": 69, "Total Days": 80, "Overall Present %": 0.863},
+            {"School Name": "UPS LOHNI", "Employee Name": "K.RAMESH", "Teacher ID": "1343732", "Total Leave Days": 5, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
+            {"School Name": "UPS LOHNI", "Employee Name": "M.SUNIL", "Teacher ID": "1314998", "Total Leave Days": 7, "Total Present Days": 73, "Total Days": 80, "Overall Present %": 0.913},
+            {"School Name": "UPS LOHNI", "Employee Name": "S.GEETHA", "Teacher ID": "1327992", "Total Leave Days": 9, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "A.VISHNUVARDHAN", "Teacher ID": "1328403", "Total Leave Days": 8, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "B.ANITA", "Teacher ID": "1332212", "Total Leave Days": 5, "Total Present Days": 75, "Total Days": 80, "Overall Present %": 0.938},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "C.RAMESH", "Teacher ID": "1316540", "Total Leave Days": 12, "Total Present Days": 68, "Total Days": 80, "Overall Present %": 0.850},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "G.VENKATESH", "Teacher ID": "1315906", "Total Leave Days": 7, "Total Present Days": 73, "Total Days": 80, "Overall Present %": 0.913},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "K.RAKESH", "Teacher ID": "1330952", "Total Leave Days": 9, "Total Present Days": 71, "Total Days": 80, "Overall Present %": 0.888},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "M.KAVITHA", "Teacher ID": "1316026", "Total Leave Days": 6, "Total Present Days": 74, "Total Days": 80, "Overall Present %": 0.925},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "P.SRINIVAS", "Teacher ID": "1317423", "Total Leave Days": 10, "Total Present Days": 70, "Total Days": 80, "Overall Present %": 0.875},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "S.RAMESH", "Teacher ID": "1344448", "Total Leave Days": 4, "Total Present Days": 76, "Total Days": 80, "Overall Present %": 0.950},
+            {"School Name": "ZPHS MAHAGAON", "Employee Name": "V.SURESH", "Teacher ID": "1320091", "Total Leave Days": 8, "Total Present Days": 72, "Total Days": 80, "Overall Present %": 0.900}
+        ];
+
+        const ADMIN_CODE = "9999999"; // Secret 7-digit code for Admin Panel
+
+        function handleLogin() {
+            const inputVal = document.getElementById('teacherIdInput').value.trim();
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = '';
+
+            if (inputVal.length !== 7) {
+                errorContainer.innerHTML = `<div class="error-msg">Please enter a valid 7-digit ID.</div>`;
+                return;
+            }
+
+            // Check if Admin
+            if (inputVal === ADMIN_CODE) {
+                openAdminPanel();
+                return;
+            }
+
+            // Check if Teacher
+            const foundTeacher = staffData.find(t => t["Teacher ID"] === inputVal);
+
+            if (foundTeacher) {
+                document.getElementById('res-name').innerText = `Welcome, ${foundTeacher["Employee Name"]}!`;
+                document.getElementById('res-school').innerText = foundTeacher["School Name"];
+                document.getElementById('res-present').innerText = foundTeacher["Total Present Days"];
+                document.getElementById('res-leave').innerText = foundTeacher["Total Leave Days"];
+                document.getElementById('res-total').innerText = foundTeacher["Total Days"];
+                document.getElementById('res-percent').innerText = (foundTeacher["Overall Present %"] * 100).toFixed(1) + '%';
+
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('result-card').style.display = 'block';
+            } else {
+                errorContainer.innerHTML = `<div class="error-msg">ID not found in records.</div>`;
+            }
+        }
+
+        function openAdminPanel() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-card').style.display = 'block';
+            renderAdminTable();
+        }
+
+        function renderAdminTable() {
+            document.getElementById('admin-total-count').innerText = staffData.length;
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+
+            staffData.forEach(staff => {
+                const row = `<tr>
+                    <td>${staff["Teacher ID"]}</td>
+                    <td>${staff["Employee Name"]}</td>
+                    <td>${staff["School Name"]}</td>
+                    <td style="color: #16a34a; font-weight:600;">${staff["Total Present Days"]}</td>
+                    <td style="color: #dc2626; font-weight:600;">${staff["Total Leave Days"]}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function addNewStaff() {
+            const school = document.getElementById('new-school').value.trim();
+            const name = document.getElementById('new-name').value.trim();
+            const id = document.getElementById('new-id').value.trim();
+            const present = parseInt(document.getElementById('new-present').value) || 0;
+            const leave = parseInt(document.getElementById('new-leave').value) || 0;
+            const msg = document.getElementById('admin-msg');
+
+            if (!school || !name || id.length !== 7) {
+                msg.style.color = "#dc2626";
+                msg.innerText = "Please fill in all fields with a valid 7-digit ID.";
+                return;
+            }
+
+            // Check if ID already exists
+            if (staffData.some(t => t["Teacher ID"] === id)) {
+                msg.style.color = "#dc2626";
+                msg.innerText = "A teacher with this ID already exists!";
+                return;
+            }
+
+            const totalDays = present + leave;
+            const percent = totalDays > 0 ? present / totalDays : 0;
+
+            staffData.push({
+                "School Name": school.toUpperCase(),
+                "Employee Name": name.toUpperCase(),
+                "Teacher ID": id,
+                "Total Leave Days": leave,
+                "Total Present Days": present,
+                "Total Days": totalDays,
+                "Overall Present %": percent
+            });
+
+            // Clear form and refresh table
+            document.getElementById('new-school').value = '';
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-id').value = '';
+            document.getElementById('new-present').value = '';
+            document.getElementById('new-leave').value = '';
+
+            msg.style.color = "#16a34a";
+            msg.innerText = "Successfully added new staff member!";
+            renderAdminTable();
+        }
+
+        function handleLogout() {
+            document.getElementById('teacherIdInput').value = '';
+            document.getElementById('error-container').innerHTML = '';
+            document.getElementById('admin-msg').innerHTML = '';
+            document.getElementById('result-card').style.display = 'none';
+            document.getElementById('admin-card').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('teacherIdInput').focus();
+        }
+
+        document.getElementById('teacherIdInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+    </script>
+</body>
+</html>
